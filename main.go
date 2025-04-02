@@ -4,6 +4,7 @@ import (
 	"fmt"
 )
 
+
 // Konwersja liczby dziesiętnej na BCD
 func decimalToBCD(decimal int) []byte {
 	var bcd []byte
@@ -33,12 +34,19 @@ func bcdToDecimal(bcd []byte) int {
 
 // Konwersja liczby binarnej na BCD
 func binaryToBCD(binary byte) []byte {
-	// TODO
-	return []byte{}
+	decimal := int(binary)
+
+	var bcd []byte
+    for decimal > 0 {
+        digit := byte(decimal % 10) 
+        bcd = append([]byte{digit}, bcd...) 
+        decimal /= 10 
+    }
+    return bcd
 }
 
 // Funkcja do mnożenia dwóch liczb BCD, na podstawie Fig. 2. w artykule
-func multiplySingleBCD(a, b byte) byte {
+func multiplySingleBCD(a, b byte) []byte {
 	var p byte = 0
 
 	// Wycięcie poszczególnych bitów z A i B
@@ -66,13 +74,14 @@ func multiplySingleBCD(a, b byte) byte {
 		p6, p5, p2, p1, p0 := (p>>6)&1, (p>>5)&1, (p>>2)&1, (p>>1)&1, p&1
 		p = p6<<6 + p5<<5 + 0b10000 + p2<<2 + p1<<1 + p0 // korekcja wyniku
 	}
-	fmt.Printf("a: %04b * b: %04b = p: %07b\n", a, b, p)
+	p_bcd := binaryToBCD(p)
+	fmt.Printf("a: %04b * b: %04b = p(BIN): %07b, p(BCD):%04b, %d\n", a, b, p, p_bcd, bcdToDecimal(p_bcd))
 
 	// następnie trzeba zamienić liczbę binarną p z powrotem na bcd
-	// p_bcd := binaryToBCD(p)
-	// return p_bcd
+	
+	return p_bcd
 
-	return p
+	// return p
 }
 
 func main() {
@@ -88,6 +97,13 @@ func main() {
 	fmt.Printf("BCD representation of %d: %04b\n", decimal2, bcd2)
 	fmt.Printf("BCD representation of %d: %04b\n", decimal3, bcd3)
 
+
+	var k byte = 0b10100
+	bin1 := binaryToBCD(k)
+
+	fmt.Printf("!!!!BCD representation of %d: %04b\n", k, bin1)
+
+
 	fmt.Printf("Decimal 1: %d\n", bcdToDecimal(bcd1))
 	fmt.Printf("Decimal 2: %d\n", bcdToDecimal(bcd2))
 	fmt.Printf("Decimal 3: %d\n", bcdToDecimal(bcd3))
@@ -96,9 +112,10 @@ func main() {
 	bcd5 := decimalToBCD(5)
 
 	result := multiplySingleBCD(bcd4[0], bcd5[0])
-	res := []byte{result}
-	fmt.Printf("Result of %04b * %04b: %08b (%d)\n", bcd4, bcd5, result, bcdToDecimal(res))
-	// na razie błędnie pokazuje 20 binarnie zamiast 2 0, ponieważ wynik mnożenia nie jest jeszcze przywracany do bcd
+	fmt.Printf("Result of %04b * %04b: ", bcd4[0], bcd5[0])
+	fmt.Printf("%04b ", result) // Drukowanie każdego BCD
+	fmt.Printf("(%d)\n", bcdToDecimal(result))
+	
 
 	/*	bcdResult := multiplyBCD(bcd1, bcd2)
 		decimalResult := bcdToDecimal(bcdResult)
@@ -112,7 +129,7 @@ func main() {
 		for j := range 10 {
 			//fmt.Printf("%d * %d", i, j)
 			multResult := multiplySingleBCD(decimalToBCD(i)[0], decimalToBCD(j)[0])
-			multResults = append(multResults, multResult)
+			multResults = append(multResults, multResult...)
 		}
 	}
 
