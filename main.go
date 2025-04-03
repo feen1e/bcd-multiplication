@@ -41,12 +41,6 @@ func binaryToBcd(bin uint8) []byte {
 		if (bcd>>4)&0x000F >= 5 {
 			bcd += 0x0030
 		}
-		if (bcd>>8)&0x000F >= 5 {
-			bcd += 0x0300
-		}
-		if (bcd>>12)&0x000F >= 5 {
-			bcd += 0x3000
-		}
 
 		// Przesunięcie bitowe i dodanie odpowiedniego bitu wejściowego
 		bcd = (bcd << 1) | uint16((bin>>(7-i))&0x01)
