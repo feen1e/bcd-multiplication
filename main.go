@@ -87,9 +87,52 @@ func multiplySingleBCD(a, b byte) []byte {
 	// Następnie trzeba zamienić liczbę binarną p z powrotem na bcd
 	p_bcd := binaryToBcd(p)
 
-	fmt.Printf("a: %04b * b: %04b = p(BIN): %07b, p(BCD):%04b, %d\n", a, b, p, p_bcd, bcdToDecimal(p_bcd))
+	// fmt.Printf("a: %04b * b: %04b = p(BIN): %07b, p(BCD):%04b, %d\n", a, b, p, p_bcd, bcdToDecimal(p_bcd))
 
 	return p_bcd
+}
+
+
+func multiplyBCD16(a, b []byte) []byte {
+	result := make([]byte, 8) // Wynik może mieć maksymalnie 8 cyfr BCD
+	n := len(result)
+
+	// i — indeks cyfry b (mnożna)
+	for i := len(b) - 1; i >= 0; i-- {
+		// j — indeks cyfry a (mnożnik)
+		for j := len(a) - 1; j >= 0; j-- {
+			
+			partial := multiplySingleBCD(a[j], b[i])
+			pos := n - 1 - ((len(a)-1-j) + (len(b)-1-i)) // wyliczenie pozycji w wyniku
+
+			// Dodaj wynik częściowy do wyniku głównego
+			k := len(partial) - 1
+			carry := byte(0)
+
+			for k >= 0 && pos >= 0 {
+				sum := result[pos] + partial[k] + carry
+				result[pos] = sum % 10
+				carry = sum / 10
+				k--
+				pos--
+			}
+
+			// Obsługa ewentualnego przeniesienia poza partial
+			for carry > 0 && pos >= 0 {
+				sum := result[pos] + carry
+				result[pos] = sum % 10
+				carry = sum / 10
+				pos--
+			}
+		}
+	}
+
+	// Usuwamy wiodące zera
+	start := 0
+	for start < len(result)-1 && result[start] == 0 {
+		start++
+	}
+	return result[start:]
 }
 
 func main() {
@@ -129,6 +172,20 @@ func main() {
 		}
 	}
 
+	fmt.Printf("Decimal 1234: %04b\n", decimalToBCD(1234))
+
+	dec1 := []int{1234, 2345, 3456, 4567, 5678, 6789, 7890, 8901, 9012}
+	dec2 := []int{4321, 5432, 6543, 7654, 8765, 9876, 1098, 2109, 3210}
+
+	for i := 0; i < len(dec1); i++ {
+		bcdA := decimalToBCD(dec1[i])
+		bcdB := decimalToBCD(dec2[i])
+
+		result2 := multiplyBCD16(bcdA,bcdB)
+
+		fmt.Printf("Mnożenie: %d * %d\n", dec1[i], dec2[i])
+		fmt.Printf("Wynik: %04b = %d\n\n", result2, bcdToDecimal(result2))
+	}
 	/*for _, r := range multResults {
 		fmt.Printf("%07b == %d\n", r, r)
 	}*/
