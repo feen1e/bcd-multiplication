@@ -33,7 +33,7 @@ func BCDToDecimal(bcd []byte) int {
 func BinaryToBCD(bin byte) []byte {
 	var bcd uint16 = 0
 	for i := 0; i < 8; i++ {
-		// Jeśli jakakolwiek cyfra BCD jest >= 5, dodaj 3
+		// Jeśli jakakolwiek cyfra BCD jest >= 5, dodanie korekty 3
 		if bcd&0x000F >= 5 {
 			bcd += 0x0003
 		}

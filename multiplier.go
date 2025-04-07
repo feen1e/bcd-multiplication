@@ -1,13 +1,10 @@
 package main
 
-// MultiplyBCD mnoży liczby BCD dowolnej długości
+// MultiplyBCD mnoży liczby BCD, maksymalnie 4-cyfrowe
 // a — mnożna
 // b — mnożnik
 func MultiplyBCD(a, b []byte) []byte {
-	aLen := len(a)
-	bLen := len(b)
-
-	result := make([]byte, aLen+bLen) // Wynik może mieć maksymalnie aLen + bLen cyfr
+	result := make([]byte, 8) // Wynik max 8-bitowy
 	n := len(result)
 
 	// i — indeks cyfry b (mnożnik)

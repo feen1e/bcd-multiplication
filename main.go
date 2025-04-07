@@ -50,14 +50,21 @@ func menu() {
 }
 
 func multiplyChosen(reader *bufio.Reader) {
-	fmt.Print("Wprowadź mnożną: ")
-	aStr, _ := reader.ReadString('\n')
-	aStr = strings.TrimSpace(aStr)
-	a, _ := strconv.Atoi(aStr)
-	fmt.Print("Wprowadź mnożnik: ")
-	bStr, _ := reader.ReadString('\n')
-	bStr = strings.TrimSpace(bStr)
-	b, _ := strconv.Atoi(bStr)
+	a, b := 10000, 10000
+	for a > 9999 || b > 9999 {
+		fmt.Print("Wprowadź mnożną: ")
+		aStr, _ := reader.ReadString('\n')
+		aStr = strings.TrimSpace(aStr)
+		a, _ = strconv.Atoi(aStr)
+		fmt.Print("Wprowadź mnożnik: ")
+		bStr, _ := reader.ReadString('\n')
+		bStr = strings.TrimSpace(bStr)
+		b, _ = strconv.Atoi(bStr)
+		if a > 9999 || b > 9999 {
+			fmt.Println("Liczby mogą być maksymalnie 4-cyfrowe.")
+		}
+	}
+
 	aBCD := DecimalToBCD(a)
 	bBCD := DecimalToBCD(b)
 	result := MultiplyBCD(aBCD, bBCD)
