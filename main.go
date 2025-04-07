@@ -3,9 +3,11 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math/rand"
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -14,6 +16,8 @@ func main() {
 
 func menu() {
 	reader := bufio.NewReader(os.Stdin)
+	source := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(source)
 
 	for {
 		fmt.Println("*—————————————————MENU—————————————————*")
@@ -35,7 +39,7 @@ func menu() {
 			}
 		case "2":
 			{
-				multiplyRandom()
+				multiplyRandom(r)
 			}
 		case "0":
 			{
@@ -65,6 +69,18 @@ func multiplyChosen(reader *bufio.Reader) {
 		}
 	}
 
+	multiplyAndPrint(a, b)
+}
+
+func multiplyRandom(r *rand.Rand) {
+	a := r.Intn(10000)
+	b := r.Intn(10000)
+	fmt.Printf("Wylosowane liczby: %d i %d\n\n", a, b)
+
+	multiplyAndPrint(a, b)
+}
+
+func multiplyAndPrint(a int, b int) {
 	aBCD := DecimalToBCD(a)
 	bBCD := DecimalToBCD(b)
 	result := MultiplyBCD(aBCD, bBCD)
@@ -73,8 +89,14 @@ func multiplyChosen(reader *bufio.Reader) {
 	for _, d := range result {
 		fmt.Printf("%04b ", d)
 	}
-	fmt.Printf("(BCD) -> %d (DEC)\n", BCDToDecimal(result))
-	fmt.Printf("Sprawdzenie: %d * %d = %d\n\n", a, b, a*b)
+	resultDec := BCDToDecimal(result)
+	fmt.Printf("(BCD) -> %d (DEC)\n", resultDec)
+	fmt.Printf("Sprawdzenie: %d * %d = %d -> ", a, b, a*b)
+	if resultDec == a*b {
+		fmt.Printf("Wynik prawidłowy\n\n")
+	} else {
+		fmt.Printf("Wynik jest błędny. Coś poszło nie tak\n\n")
+	}
 }
 
 func printBCDMultiplication(a []byte, b []byte, result []byte) {
@@ -106,20 +128,4 @@ func printBCDRow(bcd []byte, width int) {
 		fmt.Printf("%04b ", d)
 	}
 	fmt.Println()
-}
-
-func multiplyRandom() {
-	// tak tymczasowo
-	dec1 := []int{1234, 2345, 3456, 4567, 5678, 6789, 7890, 8901, 9012}
-	dec2 := []int{4321, 5432, 6543, 7654, 8765, 9876, 1098, 2109, 3210}
-
-	for i := 0; i < len(dec1); i++ {
-		bcdA := DecimalToBCD(dec1[i])
-		bcdB := DecimalToBCD(dec2[i])
-
-		result2 := MultiplyBCD(bcdA, bcdB)
-
-		fmt.Printf("Mnożenie: %d * %d = %d \n", dec1[i], dec2[i], dec1[i]*dec2[i])
-		fmt.Printf("Wynik: %04b = %d \n \n", result2, BCDToDecimal(result2))
-	}
 }
