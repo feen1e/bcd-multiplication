@@ -7,7 +7,8 @@ import (
 
 func TestDecimalToBCD(t *testing.T) {
 	expected := [][]byte{{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}}
-	for i, c := range expected {
+	for ind, c := range expected {
+		i := int64(ind)
 		result := DecimalToBCD(i)
 		if !bytes.Equal(c, result) {
 			t.Errorf("%d: expected %s, got %s", i, c, result)
@@ -16,8 +17,9 @@ func TestDecimalToBCD(t *testing.T) {
 }
 
 func TestBCDToDecimal(t *testing.T) {
-	expected := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-	for i, c := range expected {
+	expected := []int64{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	for ind, c := range expected {
+		i := int64(ind)
 		result := BCDToDecimal(DecimalToBCD(i))
 		if result != c {
 			t.Errorf("%d: expected %d, got %d", i, c, result)

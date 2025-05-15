@@ -4,7 +4,7 @@ package main
 // a — mnożna
 // b — mnożnik
 func MultiplyBCD(a, b []byte) []byte {
-	result := make([]byte, 8) // Wynik max 8-bitowy
+	result := make([]byte, len(a)+len(b)) // Wynik max 8-cyfrowy
 	n := len(result)
 
 	// i — indeks cyfry b (mnożnik)

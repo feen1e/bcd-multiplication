@@ -2,7 +2,7 @@ package main
 
 // DecimalToBCD konwertuje liczbę dziesiętną na liczbę BCD
 // decimal — wejściowa liczba dziesiętna
-func DecimalToBCD(decimal int) []byte {
+func DecimalToBCD(decimal int64) []byte {
 	var bcd []byte
 
 	for {
@@ -18,11 +18,11 @@ func DecimalToBCD(decimal int) []byte {
 
 // BCDToDecimal konwertuje liczbę BCD na liczbę dziesiętną
 // bcd — wejściowa liczba BCD
-func BCDToDecimal(bcd []byte) int {
-	decimal := 0
+func BCDToDecimal(bcd []byte) int64 {
+	decimal := int64(0)
 
 	for _, digit := range bcd {
-		decimal = decimal*10 + int(digit)
+		decimal = decimal*10 + int64(digit)
 	}
 
 	return decimal
