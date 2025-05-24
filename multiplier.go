@@ -1,10 +1,26 @@
 package main
 
+// MultiplyFloatBCD mnoży liczby BCD z uwzględnieniem części ułamkowej
+// a — mnożna BCD
+// aDecimalPlaces — pozycja przecinka w a (licząc od prawej strony)
+// b — mnożnik BCD
+// bDecimalPlaces — pozycja przecinka w b (licząc od prawej strony)
+// Zwraca wynik mnożenia BCD oraz pozycję przecinka w wyniku
+func MultiplyFloatBCD(a []byte, aDecimalPlaces int, b []byte, bDecimalPlaces int) ([]byte, int) {
+	// Mnożymy liczby BCD bez uwzględniania przecinka
+	result := MultiplyBCD(a, b)
+
+	// Obliczamy nową pozycję przecinka (suma pozycji przecinków w mnożnej i mnoźniku)
+	resultDecimalPlaces := aDecimalPlaces + bDecimalPlaces
+
+	return result, resultDecimalPlaces
+}
+
 // MultiplyBCD mnoży liczby BCD, maksymalnie 4-cyfrowe
 // a — mnożna
 // b — mnożnik
 func MultiplyBCD(a, b []byte) []byte {
-	result := make([]byte, len(a)+len(b)) // Wynik max 8-cyfrowy
+	result := make([]byte, len(a)+len(b)) // Maksymalna długość wyniku
 	n := len(result)
 
 	// i — indeks cyfry b (mnożnik)

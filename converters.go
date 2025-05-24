@@ -1,5 +1,10 @@
 package main
 
+import (
+	"strconv"
+	"strings"
+)
+
 // DecimalToBCD konwertuje liczbę dziesiętną na liczbę BCD
 // decimal — wejściowa liczba dziesiętna
 func DecimalToBCD(decimal int64) []byte {
@@ -16,16 +21,63 @@ func DecimalToBCD(decimal int64) []byte {
 	return bcd
 }
 
-// BCDToDecimal konwertuje liczbę BCD na liczbę dziesiętną
+// BCDToString konwertuje liczbę BCD z informacją o pozycji przecinka na string
 // bcd — wejściowa liczba BCD
-func BCDToDecimal(bcd []byte) int64 {
-	decimal := int64(0)
-
-	for _, digit := range bcd {
-		decimal = decimal*10 + int64(digit)
+// decimalPlaces — pozycja przecinka (licząc od prawej strony)
+func BCDToString(bcd []byte, decimalPlaces int) string {
+	if len(bcd) == 0 {
+		return "0"
 	}
 
-	return decimal
+	var result strings.Builder
+
+	// Dodaj cyfry przed przecinkiem
+	for i := 0; i < len(bcd)-decimalPlaces; i++ {
+		result.WriteByte('0' + bcd[i])
+	}
+
+	// Dodaj przecinek, jeśli są cyfry po przecinku
+	if decimalPlaces > 0 {
+		result.WriteByte('.')
+
+		// Dodaj cyfry po przecinku
+		for i := len(bcd) - decimalPlaces; i < len(bcd); i++ {
+			result.WriteByte('0' + bcd[i])
+		}
+	}
+
+	return result.String()
+}
+
+// StringToBCD konwertuje string reprezentujący liczbę na liczbę BCD z informacją o pozycji przecinka
+// str — wejściowy string reprezentujący liczbę
+// Zwraca tablicę bajtów BCD oraz pozycję przecinka (licząc od prawej strony)
+func StringToBCD(str string) ([]byte, int) {
+	// Znajdź pozycję przecinka
+	decimalPos := strings.Index(str, ".")
+
+	// Jeśli nie ma przecinka, traktuj jak liczbę całkowitą
+	if decimalPos == -1 {
+		decimal, _ := strconv.ParseInt(str, 10, 64)
+		return DecimalToBCD(decimal), 0
+	}
+
+	// Usuń przecinek
+	strWithoutDecimal := strings.Replace(str, ".", "", 1)
+
+	// Konwertuj na BCD cyfra po cyfrze
+	var bcd []byte
+	for _, ch := range strWithoutDecimal {
+		if ch >= '0' && ch <= '9' {
+			digit := byte(ch - '0')
+			bcd = append(bcd, digit)
+		}
+	}
+
+	// Oblicz pozycję przecinka (licząc od prawej strony)
+	decimalPlaces := len(strWithoutDecimal) - decimalPos
+
+	return bcd, decimalPlaces
 }
 
 // BinaryToBCD konwertuje liczbę binarną, zwracaną jako wynik mnożenia liczb BCD, z powrotem na liczbę BCD

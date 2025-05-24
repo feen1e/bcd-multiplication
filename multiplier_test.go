@@ -6,6 +6,16 @@ import (
 	"time"
 )
 
+func BCDToDecimal(bcd []byte) int64 {
+	decimal := int64(0)
+
+	for _, digit := range bcd {
+		decimal = decimal*10 + int64(digit)
+	}
+
+	return decimal
+}
+
 func TestMultiplySingleDigitBCD(t *testing.T) {
 	for a := int64(0); a <= 9; a++ {
 		for b := int64(0); b <= 9; b++ {
@@ -34,7 +44,7 @@ func TestMultiplyBCDForBigNumbers(t *testing.T) {
 	const maxSafe = 3_037_000_499
 	const samples = 1000000 // Liczba par do testowania
 
-	rand.Seed(time.Now().UnixNano())
+	rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	type pair struct {
 		a int64
