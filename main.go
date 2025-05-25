@@ -3,14 +3,13 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math"
 	"math/rand"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 )
-
-const maxAllowed = 3_037_000_499
 
 // main jest funkcją startową programu
 func main() {
@@ -24,6 +23,7 @@ func menu() {
 	r := rand.New(source)
 
 	for {
+		fmt.Println()
 		fmt.Println("*——————————————————————————MENU——————————————————————————*")
 		fmt.Println("| [1] Mnożenie dwóch wybranych liczb                     |")
 		fmt.Println("| [2] Mnożenie dwóch losowych liczb całkowitych          |")
@@ -46,11 +46,11 @@ func menu() {
 			}
 		case "2":
 			{
-				multiplyRandom(r, maxAllowed)
+				multiplyRandomInt(r)
 			}
 		case "3":
 			{
-				multiplyRandom(r, 9999)
+				multiplyRandom4DigitInt(r)
 			}
 		case "4":
 			{
@@ -72,43 +72,58 @@ func menu() {
 	}
 }
 
-// multiplyRandom generuje dwie losowe liczby całkowite i wykonuje mnożenie
+// multiplyRandomInt generuje dwie losowe liczby całkowite i wykonuje mnożenie
 // r — generator liczb losowych
-// maxRandom — maksymalna wartość losowanej liczby
-func multiplyRandom(r *rand.Rand, maxRandom int64) {
-	a := r.Int63n(maxRandom)
-	b := r.Int63n(maxRandom)
-	fmt.Printf("Wylosowane liczby: %d i %d\n\n", a, b)
+func multiplyRandomInt(r *rand.Rand) {
+	a := r.Int63n(int64(math.Pow10(r.Intn(20))))
+	b := r.Int63n(int64(math.Pow10(r.Intn(20))))
+	fmt.Printf("Wylosowane liczby: %d i %d\n", a, b)
 
 	multiplyAndPrint(strconv.FormatInt(a, 10), strconv.FormatInt(b, 10))
 }
 
-// multiplyRandomFloat generuje dwie losowe liczby zmiennoprzecinkowe z maksymalnie 5 miejscami po przecinku i wykonuje mnożenie
+// multiplyRandom4DigitInt generuje dwie losowe max 4-cyfrowe liczby całkowite i wykonuje mnożenie
+// r — generator liczb losowych
+func multiplyRandom4DigitInt(r *rand.Rand) {
+	a := r.Int63n(9999)
+	b := r.Int63n(9999)
+	fmt.Printf("Wylosowane liczby: %d i %d\n", a, b)
+
+	multiplyAndPrint(strconv.FormatInt(a, 10), strconv.FormatInt(b, 10))
+}
+
+// multiplyRandomFloat generuje dwie losowe liczby zmiennoprzecinkowe i wykonuje mnożenie
+// r — generator liczb losowych
 func multiplyRandomFloat(r *rand.Rand) {
 	// Generowanie losowych liczb zmiennoprzecinkowych
-	a := r.Float64() * 100 // Liczby od 0 do 100
-	b := r.Float64() * 100
+	aPrec := r.Intn(10)
+	bPrec := r.Intn(10)
+	a := 1 + r.Float64()*float64(r.Int63n(int64(math.Pow10(aPrec))))
+	b := 1 + r.Float64()*float64(r.Int63n(int64(math.Pow10(bPrec))))
 
-	// Formatowanie liczb do stringów z ograniczeniem do 5 miejsc po przecinku
-	aStr := strconv.FormatFloat(a, 'f', 5, 64)
-	bStr := strconv.FormatFloat(b, 'f', 5, 64)
+	// Formatowanie liczb do stringów
+	aStr := strconv.FormatFloat(a, 'f', aPrec, 64)
+	bStr := strconv.FormatFloat(b, 'f', bPrec, 64)
 
-	fmt.Printf("Wylosowane liczby: %s i %s\n\n", aStr, bStr)
+	fmt.Printf("Wylosowane liczby: %s i %s\n", aStr, bStr)
 
 	multiplyAndPrint(aStr, bStr)
 }
 
-// multiplyRandom4DigitFloat generuje dwie losowe liczby 4-cyfrowe z maksymalnie 3 miejscami po przecinku i wykonuje mnożenie
+// multiplyRandom4DigitFloat generuje dwie losowe liczby 4-cyfrowe i wykonuje mnożenie
+// r — generator liczb losowych
 func multiplyRandom4DigitFloat(r *rand.Rand) {
-	// Generowanie losowych liczb 4-cyfrowych (1000-9999) z maksymalnie 3 miejscami po przecinku
+	// Generowanie losowych liczb 4-cyfrowych (1000-9999)
 	a := 1000 + r.Float64()*9000
 	b := 1000 + r.Float64()*9000
 
-	// Formatowanie liczb do stringów z ograniczeniem do 3 miejsc po przecinku
-	aStr := strconv.FormatFloat(a, 'f', 3, 64)
-	bStr := strconv.FormatFloat(b, 'f', 3, 64)
+	// Formatowanie liczb do stringów
+	aPrec := r.Intn(10)
+	bPrec := r.Intn(10)
+	aStr := strconv.FormatFloat(a, 'f', aPrec, 64)
+	bStr := strconv.FormatFloat(b, 'f', bPrec, 64)
 
-	fmt.Printf("Wylosowane liczby: %s i %s\n\n", aStr, bStr)
+	fmt.Printf("Wylosowane liczby: %s i %s\n", aStr, bStr)
 
 	multiplyAndPrint(aStr, bStr)
 }
@@ -124,22 +139,9 @@ func multiplyChosen(reader *bufio.Reader) {
 	bStr, _ := reader.ReadString('\n')
 	bStr = strings.TrimSpace(bStr)
 
-	// Zamień przecinki na kropki (dla polskiej notacji)
+	// Zamiana przecinków na kropki (dla polskiej notacji)
 	aStr = strings.Replace(aStr, ",", ".", -1)
 	bStr = strings.Replace(bStr, ",", ".", -1)
-
-	a, errA := strconv.ParseFloat(aStr, 64)
-	b, errB := strconv.ParseFloat(bStr, 64)
-
-	if errA != nil || errB != nil {
-		fmt.Println("Błąd: Nieprawidłowa liczba")
-		return
-	}
-
-	if a > maxAllowed || b > maxAllowed {
-		fmt.Printf("Liczby muszą być mniejsze niż %d\n", maxAllowed)
-		return
-	}
 
 	multiplyAndPrint(aStr, bStr)
 }
@@ -154,7 +156,7 @@ func multiplyChosen(reader *bufio.Reader) {
 func printBCDMultiplication(a []byte, aDecPos int, b []byte, bDecPos int, result []byte, resultDecPos int) {
 	maxLen := max(len(a), len(b), len(result))
 
-	fmt.Print("    ")
+	fmt.Print("\n    ")
 	printBCDRow(a, aDecPos, maxLen)
 
 	fmt.Print(" *  ")

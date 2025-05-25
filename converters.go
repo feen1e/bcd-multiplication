@@ -1,25 +1,8 @@
 package main
 
 import (
-	"strconv"
 	"strings"
 )
-
-// DecimalToBCD konwertuje liczbę dziesiętną na liczbę BCD
-// decimal — wejściowa liczba dziesiętna
-func DecimalToBCD(decimal int64) []byte {
-	var bcd []byte
-
-	for {
-		bcd = append([]byte{byte(decimal % 10)}, bcd...)
-		decimal /= 10
-		if decimal <= 0 {
-			break
-		}
-	}
-
-	return bcd
-}
 
 // BCDToString konwertuje liczbę BCD z informacją o pozycji przecinka na string
 // bcd — wejściowa liczba BCD
@@ -56,12 +39,6 @@ func StringToBCD(str string) ([]byte, int) {
 	// Znajdź pozycję przecinka
 	decimalPos := strings.Index(str, ".")
 
-	// Jeśli nie ma przecinka, traktuj jak liczbę całkowitą
-	if decimalPos == -1 {
-		decimal, _ := strconv.ParseInt(str, 10, 64)
-		return DecimalToBCD(decimal), 0
-	}
-
 	// Usuń przecinek
 	strWithoutDecimal := strings.Replace(str, ".", "", 1)
 
@@ -76,6 +53,10 @@ func StringToBCD(str string) ([]byte, int) {
 
 	// Oblicz pozycję przecinka (licząc od prawej strony)
 	decimalPlaces := len(strWithoutDecimal) - decimalPos
+
+	if decimalPos == -1 {
+		decimalPlaces = 0
+	}
 
 	return bcd, decimalPlaces
 }

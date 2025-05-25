@@ -6,6 +6,18 @@ import (
 	"time"
 )
 
+func DecimalToBCD(decimal int64) []byte {
+	var bcd []byte
+	for {
+		bcd = append([]byte{byte(decimal % 10)}, bcd...)
+		decimal /= 10
+		if decimal <= 0 {
+			break
+		}
+	}
+	return bcd
+}
+
 func BCDToDecimal(bcd []byte) int64 {
 	decimal := int64(0)
 
