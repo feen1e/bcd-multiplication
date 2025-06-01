@@ -75,8 +75,8 @@ func menu() {
 // multiplyRandomInt generuje dwie losowe liczby całkowite i wykonuje mnożenie
 // r — generator liczb losowych
 func multiplyRandomInt(r *rand.Rand) {
-	a := r.Int63n(int64(math.Pow10(r.Intn(20))))
-	b := r.Int63n(int64(math.Pow10(r.Intn(20))))
+	a := r.Int63n(int64(math.Pow10(r.Intn(18))))
+	b := r.Int63n(int64(math.Pow10(r.Intn(18))))
 	fmt.Printf("Wylosowane liczby: %d i %d\n", a, b)
 
 	multiplyAndPrint(strconv.FormatInt(a, 10), strconv.FormatInt(b, 10))
@@ -215,5 +215,5 @@ func multiplyAndPrint(aStr string, bStr string) {
 
 	// Wyświetlenie wyniku mnożenia dziesiętnego dla porównania z BCD
 	fmt.Printf("Mnożenie BCD:        %s * %s = %s\n", aStr, bStr, resultStr)
-	fmt.Printf("Mnożenie dziesiętne: %s * %s = %.30g\n", aStr, bStr, regularResult)
+	fmt.Printf("Mnożenie dziesiętne: %s * %s = %.17g\n", aStr, bStr, regularResult)
 }
