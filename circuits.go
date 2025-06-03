@@ -20,8 +20,8 @@ func mux2to1(a, b, ctrl byte) byte {
 func mul2x2(a1, a0, b1, b0 byte) (m3, m2, m1, m0 byte) {
 	// 3.2.2 2x2 Multiplier
 	m0 = a0 & b0
-	m1 = (a0 & b1 & ((^a1 | ^b0) & 1)) | (a1 & b0 & ((^a0 | ^b1) & 1)) // do operacji NOT dodano AND 1 jako maske,
-	m2 = a1 & b1 & ((^a0 | ^b0) & 1)                                   // ktora zapewnia ze tylko ostatni bit jest brany pod uwage
+	m1 = (a0 & b1 & ((^a1 | ^b0) & 1)) | (a1 & b0 & ((^a0 | ^b1) & 1)) // do operacji NOT dodano AND 1 jako maskę,
+	m2 = a1 & b1 & ((^a0 | ^b0) & 1)                                   // która zapewnia, że tylko ostatni bit jest brany pod uwagę
 	m3 = a1 & a0 & b1 & b0
 	//fmt.Printf("m3: %0b, m2: %0b, m1: %0b, m0: %0b\n", m3, m2, m1, m0)
 	return
@@ -107,6 +107,7 @@ func BinaryToBCDConverter(p byte) (bcdResult []byte) {
 	// 4.2 Proposed binary-to-bcd converter
 	p6, p5, p4, p3, p2, p1, p0 := (p>>6)&1, (p>>5)&1, (p>>4)&1, (p>>3)&1, (p>>2)&1, (p>>1)&1, p&1
 
+	// [28] - Drugi artykuł, sekcja 'Arithmetic II' na stronie 37
 	cc := ((p3&1)<<3 | (p2&1)<<2 | (p1&1)<<1 | p0&1) + ((p4 & 1) * 6) + ((p6&1)*4 + (p5&1)*2)
 	dd := ((p6&1)<<2 | (p5&1)<<1 | p4&1) + ((p6&1)<<1 | p5&1)
 
@@ -126,7 +127,7 @@ func BinaryToBCDConverter(p byte) (bcdResult []byte) {
 	d3 := p6 & p0
 	d210 := (dd2<<2 | dd1<<1 | dd0) + (cy1<<1 | cy0)
 
-	// zapis jako tablica bajtow
+	// zapis jako tablica bajtów
 	c := c321<<1 | c0
 	c = c & 0b1111
 	d := d3<<3 | d210

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -11,7 +10,7 @@ func TestFinalTwoDigitMultiplier(t *testing.T) {
 			result := finalTwoDigitMultiplier(DecimalToBCD(a)[0], DecimalToBCD(b)[0])
 			r := BCDToDecimal(BinaryToBCDConverter(result))
 			expected := a * b
-			fmt.Printf("%d * %d = %08b (%d)\n", a, b, result, result)
+			//fmt.Printf("%d * %d = %08b (%d)\n", a, b, result, result)
 			if r != expected {
 				t.Errorf("finalTwoDigitMultiplier(%d,%d): expected %d, got %d", a, b, expected, r)
 			}
