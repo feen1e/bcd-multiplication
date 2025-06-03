@@ -102,3 +102,37 @@ func finalTwoDigitMultiplier(a, b byte) (p byte) {
 	p = (p6&1)<<6 | (p5&1)<<5 | (p4&1)<<4 | (p3&1)<<3 | (p2&1)<<2 | (p1&1)<<1 | (p0 & 1)
 	return
 }
+
+func BinaryToBCDConverter(p byte) (bcdResult []byte) {
+	// 4.2 Proposed binary-to-bcd converter
+	p6, p5, p4, p3, p2, p1, p0 := (p>>6)&1, (p>>5)&1, (p>>4)&1, (p>>3)&1, (p>>2)&1, (p>>1)&1, p&1
+
+	cc := ((p3&1)<<3 | (p2&1)<<2 | (p1&1)<<1 | p0&1) + ((p4 & 1) * 6) + ((p6&1)*4 + (p5&1)*2)
+	dd := ((p6&1)<<2 | (p5&1)<<1 | p4&1) + ((p6&1)<<1 | p5&1)
+
+	cy1, cy0 := byte(0), byte(0)
+	if cc > 0b10011 {
+		cy1 = 1
+	}
+	if 0b1001 < cc && cc < 0b10100 {
+		cy0 = 1
+	}
+
+	cc3, cc2, cc1 := (cc>>3)&1, (cc>>2)&1, (cc>>1)&1
+	dd2, dd1, dd0 := (dd>>2)&1, (dd>>1)&1, dd&1
+
+	c321 := (cc3<<2 | cc2<<1 | cc1) + (cy1<<2 | (cy1|cy0)<<1 | cy0)
+	c0 := p0
+	d3 := p6 & p0
+	d210 := (dd2<<2 | dd1<<1 | dd0) + (cy1<<1 | cy0)
+
+	// zapis jako tablica bajtow
+	c := c321<<1 | c0
+	c = c & 0b1111
+	d := d3<<3 | d210
+	d = d & 0b1111
+
+	bcdResult = append(bcdResult, d)
+	bcdResult = append(bcdResult, c)
+	return
+}

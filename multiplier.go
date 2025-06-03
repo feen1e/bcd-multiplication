@@ -28,8 +28,9 @@ func MultiplyBCD(a, b []byte) []byte {
 		// j — indeks cyfry a (mnożna)
 		for j := len(a) - 1; j >= 0; j-- {
 
-			partial := MultiplySingleDigitBCD(a[j], b[i])             // wynik częściowy
-			position := n - 1 - ((len(a) - 1 - j) + (len(b) - 1 - i)) // wyliczenie pozycji w wyniku
+			//partial := MultiplySingleDigitBCD(a[j], b[i])
+			partial := BinaryToBCDConverter(finalTwoDigitMultiplier(a[j], b[i])) // wynik częściowy
+			position := n - 1 - ((len(a) - 1 - j) + (len(b) - 1 - i))            // wyliczenie pozycji w wyniku
 
 			// Dodanie wyniku częściowego do wyniku głównego
 			k := len(partial) - 1
