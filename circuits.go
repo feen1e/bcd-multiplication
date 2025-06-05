@@ -91,7 +91,7 @@ func correction(p6p, r4, r3, p0pp byte) (p4, p3 byte) {
 	return
 }
 
-func finalTwoDigitMultiplier(a, b byte) (p byte) {
+func FinalTwoDigitMultiplier(a, b byte) (p byte) {
 	// Fig. 7. Specific architecture for binary multiplier of two BCD digits
 	p5pp, p4pp, p3pp, p2pp, p1pp, p0pp := mul3x3(a, b)
 	p6p, p5p, p4p, p3p := circa3b3(a, b)
