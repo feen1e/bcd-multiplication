@@ -65,7 +65,7 @@ func TestMultiplyBCDForBigNumbers(t *testing.T) {
 
 	var testPairs []pair
 
-	// Przykładowe wartości i edge cases
+	// Przykładowe wartości
 	testPairs = append(testPairs, pair{10_000, 10_000}, pair{maxSafe, maxSafe}, pair{1, 1}, pair{123456789, 987654321})
 
 	// Wylosowane liczby

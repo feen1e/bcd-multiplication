@@ -10,13 +10,13 @@ func MultiplyFloatBCD(a []byte, aDecimalPlaces int, b []byte, bDecimalPlaces int
 	// Mnożymy liczby BCD bez uwzględniania przecinka
 	result := MultiplyBCD(a, b)
 
-	// Obliczamy nową pozycję przecinka (suma pozycji przecinków w mnożnej i mnoźniku)
+	// Obliczamy nową pozycję przecinka (suma pozycji przecinków w mnożnej i mnożniku)
 	resultDecimalPlaces := aDecimalPlaces + bDecimalPlaces
 
 	return result, resultDecimalPlaces
 }
 
-// MultiplyBCD mnoży liczby BCD, maksymalnie 4-cyfrowe
+// MultiplyBCD mnoży liczby BCD
 // a — mnożna
 // b — mnożnik
 func MultiplyBCD(a, b []byte) []byte {
@@ -28,8 +28,8 @@ func MultiplyBCD(a, b []byte) []byte {
 		// j — indeks cyfry a (mnożna)
 		for j := len(a) - 1; j >= 0; j-- {
 
-			//partial := MultiplySingleDigitBCD(a[j], b[i])
-			partial := BinaryToBCDConverter(finalTwoDigitMultiplier(a[j], b[i])) // wynik częściowy
+			//partial := MultiplySingleDigitBCD(a[j], b[i]) // - algorytm z Fig. 2, poniżej wersja z układem z Fig. 7
+			partial := BinaryToBCDConverter(FinalTwoDigitMultiplier(a[j], b[i])) // wynik częściowy
 			position := n - 1 - ((len(a) - 1 - j) + (len(b) - 1 - i))            // wyliczenie pozycji w wyniku
 
 			// Dodanie wyniku częściowego do wyniku głównego
@@ -62,7 +62,7 @@ func MultiplyBCD(a, b []byte) []byte {
 	return result[start:]
 }
 
-// MultiplySingleDigitBCD mnoży dwie jednocyfrowe liczby BCD; implementacja na podstawie Fig. 2. w artykule
+// MultiplySingleDigitBCD mnoży dwie 4-bitowe cyfry BCD; implementacja na podstawie Fig. 2. w artykule
 // a — mnożna
 // b — mnożnik
 func MultiplySingleDigitBCD(a, b byte) []byte {

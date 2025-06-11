@@ -91,7 +91,8 @@ func correction(p6p, r4, r3, p0pp byte) (p4, p3 byte) {
 	return
 }
 
-func finalTwoDigitMultiplier(a, b byte) (p byte) {
+// FinalTwoDigitMultiplier oblicza iloczyn dwóch cyfr BCD; zwraca 7-bitową liczbę binarną. Implementacja na podstawie Fig 7.
+func FinalTwoDigitMultiplier(a, b byte) (p byte) {
 	// Fig. 7. Specific architecture for binary multiplier of two BCD digits
 	p5pp, p4pp, p3pp, p2pp, p1pp, p0pp := mul3x3(a, b)
 	p6p, p5p, p4p, p3p := circa3b3(a, b)
@@ -103,11 +104,12 @@ func finalTwoDigitMultiplier(a, b byte) (p byte) {
 	return
 }
 
+// BinaryToBCDConverter konwertuje 7-bitową liczbę binarną na dwie cyfry w reprezentacji BCD. Implementacja na podstawie sekcji 4.2.
 func BinaryToBCDConverter(p byte) (bcdResult []byte) {
 	// 4.2 Proposed binary-to-bcd converter
 	p6, p5, p4, p3, p2, p1, p0 := (p>>6)&1, (p>>5)&1, (p>>4)&1, (p>>3)&1, (p>>2)&1, (p>>1)&1, p&1
 
-	// [28] - Drugi artykuł, sekcja 'Arithmetic II' na stronie 37
+	// Drugi artykuł, sekcja 'Arithmetic II' na stronie 37
 	cc := ((p3&1)<<3 | (p2&1)<<2 | (p1&1)<<1 | p0&1) + ((p4 & 1) * 6) + ((p6&1)*4 + (p5&1)*2)
 	dd := ((p6&1)<<2 | (p5&1)<<1 | p4&1) + ((p6&1)<<1 | p5&1)
 
@@ -127,9 +129,9 @@ func BinaryToBCDConverter(p byte) (bcdResult []byte) {
 	d3 := p6 & p0
 	d210 := (dd2<<2 | dd1<<1 | dd0) + (cy1<<1 | cy0)
 
-	// zapis jako tablica bajtów
+	// Zapis jako tablica bajtów
 	c := c321<<1 | c0
-	c = c & 0b1111
+	c = c & 0b1111 // zapewnia, że cyfra jest 4-bitowa
 	d := d3<<3 | d210
 	d = d & 0b1111
 
