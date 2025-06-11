@@ -95,6 +95,6 @@ func MultiplySingleDigitBCD(a, b byte) []byte {
 	}
 
 	// Przywrócenie wyniku binarnego na liczbę BCD
-	pBcd := BinaryToBCD(p)
+	pBcd := BinaryToBCDConverter(p)
 	return pBcd
 }
